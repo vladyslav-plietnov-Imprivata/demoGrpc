@@ -15,8 +15,8 @@ public class GrpcConfig {
 
   @Bean
   public ManagedChannel managedChannel(
-      @Value("${demo.grpc.host}") String host,
-      @Value("${demo.grpc.port}") int port
+      @Value("${demo.grpc.host:localhost}") String host,
+      @Value("${demo.grpc.port:9091}") int port
   ) {
     return ManagedChannelBuilder.forAddress(host, port)
         .usePlaintext()

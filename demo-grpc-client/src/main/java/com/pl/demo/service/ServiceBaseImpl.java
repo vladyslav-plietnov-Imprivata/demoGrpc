@@ -23,12 +23,12 @@ public class ServiceBaseImpl {
 
     private final HelloServiceBlockingStub helloServiceBlockingStub;
     private final CircuitBreaker circuitBreaker;
-    private Integer DEAD_LINE_SECONDS = 5;
+    private final Integer DEAD_LINE_SECONDS;
 
     public ServiceBaseImpl(
             HelloServiceBlockingStub helloServiceBlockingStub,
             CircuitBreaker circuitBreaker,
-            @Value("grpc.deadline:5") Integer DEAD_LINE_SECONDS
+            @Value("${grpc.deadline:5}") int DEAD_LINE_SECONDS
     ) {
         this.helloServiceBlockingStub = helloServiceBlockingStub;
         this.circuitBreaker = circuitBreaker;
