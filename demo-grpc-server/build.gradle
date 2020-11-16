@@ -1,0 +1,89 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.13'
+    }
+}
+
+plugins {
+    id 'org.springframework.boot' version '2.3.5.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.10.RELEASE'
+    id 'java'
+}
+
+def grpcVersion = '1.33.1'
+def protocVersion = '3.13.0'
+
+apply plugin: 'com.google.protobuf'
+apply plugin: 'idea'
+
+group 'com.pl'
+version '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    protobuf(project(':demo-grpc'))
+    implementation project(':demo-core')
+
+    implementation 'io.github.lognet:grpc-spring-boot-starter:4.2.2'
+
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+}
+
+def generatedSourcesDir = "$projectDir/generated-src"
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java', 'generated-src/main/java']
+        }
+    }
+}
+
+idea {
+    module {
+        generatedSourceDirs += file('generated-src/main/java')
+    }
+}
+
+protobuf {
+    generatedFilesBaseDir = generatedSourcesDir
+
+    protoc {
+        artifact = "com.google.protobuf:protoc:${protocVersion}"
+    }
+
+    plugins {
+        grpc {
+            artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}"
+        }
+    }
+    generateProtoTasks {
+        all().each { task ->
+            task.plugins {
+                grpc {
+                    outputSubDir = 'java'
+                }
+            }
+        }
+    }
+}
+
+test {
+    useJUnitPlatform()
+}

@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package com.pl.demo.grpc;
+
+option java_package = "com.pl.demo.grpc";
+
+service HelloService {
+
+  rpc getGreeting(GetGreetingRequest) returns(GreetingResponse);
+
+  rpc createGreeting(CreateGreetingRequest) returns(GreetingResponse);
+
+  rpc deleteGreeting(DeleteGreetingRequest) returns(DeleteGreetingResponse);
+
+  rpc getAllGreetings(GetGreetingsRequest) returns(GreetingsResponse);
+
+  rpc UpdateGreeting(UpdateGreetingRequest) returns(GreetingResponse);
+}
+
+message UpdateGreetingRequest{
+  int32 id = 1;
+  string greeting = 2;
+}
+
+message  CreateGreetingRequest{
+  string greeting = 1;
+}
+
+message  GetGreetingsRequest{
+}
+
+message DeleteGreetingResponse{
+}
+
+message GetGreetingRequest{
+  int32 id = 1;
+}
+
+message DeleteGreetingRequest{
+  int32 id = 1;
+}
+
+message GreetingResponse{
+  int32 id = 1;
+  string greeting = 2;
+}
+
+message GreetingsResponse{
+  repeated GreetingResponse greetings = 1;
+}
