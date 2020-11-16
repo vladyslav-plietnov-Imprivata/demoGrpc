@@ -11,92 +11,104 @@ import static com.pl.demo.grpc.Hello.UpdateGreetingRequest;
 import com.pl.demo.dto.HelloDto;
 import com.pl.demo.grpc.HelloServiceGrpc.HelloServiceBlockingStub;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
 public class ServiceBaseImpl {
 
-  private final HelloServiceBlockingStub helloServiceBlockingStub;
-  private final CircuitBreaker circuitBreaker;
+    private final HelloServiceBlockingStub helloServiceBlockingStub;
+    private final CircuitBreaker circuitBreaker;
+    private Integer DEAD_LINE_SECONDS = 5;
 
-  public ServiceBaseImpl(HelloServiceBlockingStub helloServiceBlockingStub,
-                         CircuitBreaker circuitBreaker) {
-    this.helloServiceBlockingStub = helloServiceBlockingStub;
-    this.circuitBreaker = circuitBreaker;
-  }
+    public ServiceBaseImpl(
+            HelloServiceBlockingStub helloServiceBlockingStub,
+            CircuitBreaker circuitBreaker,
+            @Value("grpc.deadline:5") Integer DEAD_LINE_SECONDS
+    ) {
+        this.helloServiceBlockingStub = helloServiceBlockingStub;
+        this.circuitBreaker = circuitBreaker;
+        this.DEAD_LINE_SECONDS = DEAD_LINE_SECONDS;
+    }
 
-  public HelloDto getGreeting(int id) {
-    GetGreetingRequest request = GetGreetingRequest.newBuilder()
-        .setId(id)
-        .build();
+    public HelloDto getGreeting(int id) {
+        GetGreetingRequest request = GetGreetingRequest.newBuilder()
+                .setId(id)
+                .build();
 
-    GreetingResponse response = decorateWithServiceUnavailableException(
-        circuitBreaker,
-        () -> helloServiceBlockingStub.getGreeting(
-            request
-        ));
+        GreetingResponse response = decorateWithServiceUnavailableException(
+                circuitBreaker,
+                () -> helloServiceBlockingStub.withDeadlineAfter(DEAD_LINE_SECONDS, TimeUnit.SECONDS)
+                        .getGreeting(
+                                request
+                        ));
 
-    return toHelloDto(response);
-  }
+        return toHelloDto(response);
+    }
 
-  public HelloDto createGreeting(String greeting) {
-    CreateGreetingRequest request = CreateGreetingRequest.newBuilder()
-        .setGreeting(greeting)
-        .build();
+    public HelloDto createGreeting(String greeting) {
+        CreateGreetingRequest request = CreateGreetingRequest.newBuilder()
+                .setGreeting(greeting)
+                .build();
 
-    GreetingResponse response = decorateWithServiceUnavailableException(
-        circuitBreaker,
-        () -> helloServiceBlockingStub.createGreeting(
-            request
-        ));
+        GreetingResponse response = decorateWithServiceUnavailableException(
+                circuitBreaker,
+                () -> helloServiceBlockingStub.withDeadlineAfter(5, TimeUnit.SECONDS)
+                        .createGreeting(
+                                request
+                        ));
 
-    return toHelloDto(response);
-  }
+        return toHelloDto(response);
+    }
 
-  public HelloDto updateGreeting(int id,String greeting) {
-    UpdateGreetingRequest request = UpdateGreetingRequest.newBuilder()
-        .setId(id)
-        .setGreeting(greeting)
-        .build();
+    public HelloDto updateGreeting(int id, String greeting) {
+        UpdateGreetingRequest request = UpdateGreetingRequest.newBuilder()
+                .setId(id)
+                .setGreeting(greeting)
+                .build();
 
-    GreetingResponse response = decorateWithServiceUnavailableException(
-        circuitBreaker,
-        () -> helloServiceBlockingStub.updateGreeting(
-            request
-        ));
+        GreetingResponse response = decorateWithServiceUnavailableException(
+                circuitBreaker,
+                () -> helloServiceBlockingStub.withDeadlineAfter(5, TimeUnit.SECONDS)
+                        .updateGreeting(
+                                request
+                        ));
 
-    return toHelloDto(response);
-  }
+        return toHelloDto(response);
+    }
 
-  public void deleteGreeting(int id) {
-    DeleteGreetingRequest request = DeleteGreetingRequest.newBuilder()
-        .setId(id)
-        .build();
+    public void deleteGreeting(int id) {
+        DeleteGreetingRequest request = DeleteGreetingRequest.newBuilder()
+                .setId(id)
+                .build();
 
-    decorateWithServiceUnavailableException(
-        circuitBreaker,
-        () -> helloServiceBlockingStub.deleteGreeting(
-            request)
-    );
-  }
+        decorateWithServiceUnavailableException(
+                circuitBreaker,
+                () -> helloServiceBlockingStub.withDeadlineAfter(5, TimeUnit.SECONDS)
+                        .deleteGreeting(
+                                request)
+        );
+    }
 
-  public List<HelloDto> getAllGreetings() {
-    return decorateWithServiceUnavailableException(
-        circuitBreaker,
-        () -> helloServiceBlockingStub.getAllGreetings(
-            GetGreetingsRequest.getDefaultInstance()))
-        .getGreetingsList().stream()
-        .map(this::toHelloDto)
-        .collect(Collectors.toList());
-  }
+    public List<HelloDto> getAllGreetings() {
+        return decorateWithServiceUnavailableException(
+                circuitBreaker,
+                () -> helloServiceBlockingStub.withDeadlineAfter(5, TimeUnit.SECONDS)
+                        .getAllGreetings(
+                                GetGreetingsRequest.getDefaultInstance()))
+                .getGreetingsList().stream()
+                .map(this::toHelloDto)
+                .collect(Collectors.toList());
+    }
 
-  private HelloDto toHelloDto(GreetingResponse greetingResponse) {
-    return HelloDto.builder()
-        .id(greetingResponse.getId())
-        .value(greetingResponse.getGreeting())
-        .build();
-  }
+    private HelloDto toHelloDto(GreetingResponse greetingResponse) {
+        return HelloDto.builder()
+                .id(greetingResponse.getId())
+                .value(greetingResponse.getGreeting())
+                .build();
+    }
 }
