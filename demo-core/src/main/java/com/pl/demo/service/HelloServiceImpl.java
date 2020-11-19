@@ -14,44 +14,44 @@ import java.util.stream.StreamSupport;
 @Service
 public class HelloServiceImpl implements HelloService {
 
-  private final HelloRepository helloRepository;
-  private final Mapper mapper;
+    private final HelloRepository helloRepository;
+    private final Mapper mapper;
 
-  public HelloServiceImpl(HelloRepository helloRepository, Mapper mapper) {
-    this.helloRepository = helloRepository;
-    this.mapper = mapper;
-  }
-
-  public HelloDto createGreeting(String greeting) {
-    HelloEntity entity = mapper.toHelloWorldEntity(greeting);
-    HelloEntity saveResult = helloRepository.save(entity);
-    return mapper.toHelloDto(saveResult);
-  }
-
-  public HelloDto updateGreeting(int id, String greeting) {
-    Optional<HelloEntity> entity = helloRepository.findById(id);
-    if (entity.isPresent()) {
-      entity.get().setValue(greeting);
-      return mapper.toHelloDto(helloRepository.save(entity.get()));
-    } else {
-      return createGreeting(greeting);
+    public HelloServiceImpl(HelloRepository helloRepository, Mapper mapper) {
+        this.helloRepository = helloRepository;
+        this.mapper = mapper;
     }
-  }
 
-  public void delete(int id) {
-    helloRepository.deleteById(id);
-  }
+    public HelloDto createGreeting(String greeting) {
+        HelloEntity entity = mapper.toHelloWorldEntity(greeting);
+        HelloEntity saveResult = helloRepository.save(entity);
+        return mapper.toHelloDto(saveResult);
+    }
 
-  public HelloDto get(int id) {
-    HelloEntity helloEntity =
-        helloRepository.findById(id).orElseGet(() -> HelloEntity.builder().build());
-    return mapper.toHelloDto(helloEntity);
-  }
+    public HelloDto updateGreeting(int id, String greeting) {
+        Optional<HelloEntity> entity = helloRepository.findById(id);
+        if (entity.isPresent()) {
+            entity.get().setValue(greeting);
+            return mapper.toHelloDto(helloRepository.save(entity.get()));
+        } else {
+            return createGreeting(greeting);
+        }
+    }
 
-  @Override
-  public List<HelloDto> getAll() {
-    return StreamSupport.stream(helloRepository.findAll().spliterator(), false)
-        .map(mapper::toHelloDto)
-        .collect(Collectors.toList());
-  }
+    public void delete(int id) {
+        helloRepository.deleteById(id);
+    }
+
+    public HelloDto get(int id) {
+        HelloEntity helloEntity =
+            helloRepository.findById(id).orElseGet(() -> HelloEntity.builder().build());
+        return mapper.toHelloDto(helloEntity);
+    }
+
+    @Override
+    public List<HelloDto> getAll() {
+        return StreamSupport.stream(helloRepository.findAll().spliterator(), false)
+            .map(mapper::toHelloDto)
+            .collect(Collectors.toList());
+    }
 }

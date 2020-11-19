@@ -6,6 +6,7 @@ import com.pl.demo.grpc.HelloServiceGrpc;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,23 +14,20 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class GrpcConfig {
 
-  @Bean
-  public ManagedChannel managedChannel(
-      @Value("${demo.grpc.host:localhost}") String host,
-      @Value("${demo.grpc.port:9091}") int port
-  ) {
-    return ManagedChannelBuilder.forAddress(host, port)
-        .usePlaintext()
-        .build();
-  }
+    @Bean
+    public ManagedChannel managedChannel(ClientBaseConfig clientBaseConfig) {
+        return ManagedChannelBuilder.forAddress(clientBaseConfig.getHost(), clientBaseConfig.getPort())
+            .usePlaintext()
+            .build();
+    }
 
-  @Bean
-  public HelloServiceBlockingStub helloServiceBlockingStub(ManagedChannel managedChannel) {
-    return HelloServiceGrpc.newBlockingStub(managedChannel);
-  }
+    @Bean
+    public HelloServiceBlockingStub helloServiceBlockingStub(ManagedChannel managedChannel) {
+        return HelloServiceGrpc.newBlockingStub(managedChannel);
+    }
 
-  @Bean
-  public CircuitBreaker circuitBreaker() {
-    return CircuitBreaker.ofDefaults("hello-service");
-  }
+    @Bean
+    public CircuitBreaker circuitBreaker() {
+        return CircuitBreaker.ofDefaults("hello-service");
+    }
 }

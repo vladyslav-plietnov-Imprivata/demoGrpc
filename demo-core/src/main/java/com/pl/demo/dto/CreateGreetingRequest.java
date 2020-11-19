@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class CreateGreetingRequest {
 
-  private String greeting;
+    private String greeting;
 }

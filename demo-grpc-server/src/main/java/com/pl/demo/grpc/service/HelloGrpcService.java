@@ -21,90 +21,90 @@ import java.util.List;
 @GRpcService
 public class HelloGrpcService extends HelloServiceGrpc.HelloServiceImplBase {
 
-  private final HelloService helloService;
+    private final HelloService helloService;
 
-  public HelloGrpcService(HelloService helloService) {
-    this.helloService = helloService;
-  }
-
-  @Override
-  public void getGreeting(
-      GetGreetingRequest request,
-      StreamObserver<GreetingResponse> responseObserver
-  ) {
-    if (request.equals(request.getDefaultInstanceForType())) {
-      responseObserver.onError(new IllegalArgumentException("invalid greeting id"));
-    } else {
-      HelloDto helloDto = helloService.get(request.getId());
-      GreetingResponse response = toGreetingResponse(helloDto);
-      responseObserver.onNext(response);
-      responseObserver.onCompleted();
+    public HelloGrpcService(HelloService helloService) {
+        this.helloService = helloService;
     }
-  }
 
-  @Override
-  public void createGreeting(
-      CreateGreetingRequest request,
-      StreamObserver<GreetingResponse> responseObserver
-  ) {
-    if (request.equals(request.getDefaultInstanceForType())) {
-      responseObserver.onError(new IllegalArgumentException("invalid greeting"));
-    } else {
-      HelloDto helloDto = helloService.createGreeting(request.getGreeting());
-      responseObserver.onNext(toGreetingResponse(helloDto));
-      responseObserver.onCompleted();
+    @Override
+    public void getGreeting(
+        GetGreetingRequest request,
+        StreamObserver<GreetingResponse> responseObserver
+    ) {
+        if (request.equals(request.getDefaultInstanceForType())) {
+            responseObserver.onError(new IllegalArgumentException("invalid greeting id"));
+        } else {
+            HelloDto helloDto = helloService.get(request.getId());
+            GreetingResponse response = toGreetingResponse(helloDto);
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+        }
     }
-  }
 
-  @Override
-  public void deleteGreeting(
-      DeleteGreetingRequest request,
-      StreamObserver<DeleteGreetingResponse> responseObserver
-  ) {
-    if (request.equals(request.getDefaultInstanceForType())) {
-      responseObserver.onError(new IllegalArgumentException("invalid greeting id"));
-    } else {
-      helloService.delete(request.getId());
-      responseObserver.onNext(DeleteGreetingResponse.getDefaultInstance());
-      responseObserver.onCompleted();
+    @Override
+    public void createGreeting(
+        CreateGreetingRequest request,
+        StreamObserver<GreetingResponse> responseObserver
+    ) {
+        if (request.equals(request.getDefaultInstanceForType())) {
+            responseObserver.onError(new IllegalArgumentException("invalid greeting"));
+        } else {
+            HelloDto helloDto = helloService.createGreeting(request.getGreeting());
+            responseObserver.onNext(toGreetingResponse(helloDto));
+            responseObserver.onCompleted();
+        }
     }
-  }
 
-  @Override
-  public void getAllGreetings(
-      GetGreetingsRequest request,
-      StreamObserver<GreetingsResponse> responseObserver
-  ) {
-    List<GreetingResponse> result = helloService.getAll()
-        .stream().map(this::toGreetingResponse)
-        .collect(toList());
-
-    GreetingsResponse response = GreetingsResponse.newBuilder()
-        .addAllGreetings(result)
-        .build();
-
-    responseObserver.onNext(response);
-    responseObserver.onCompleted();
-  }
-
-  @Override
-  public void updateGreeting(
-      UpdateGreetingRequest request,
-      StreamObserver<GreetingResponse> responseObserver
-  ) {
-    if (request.equals(request.getDefaultInstanceForType())) {
-      responseObserver.onError(new IllegalArgumentException("invalid greeting id"));
-    } else {
-      HelloDto helloDto = helloService.updateGreeting(request.getId(), request.getGreeting());
-      responseObserver.onNext(toGreetingResponse(helloDto));
-      responseObserver.onCompleted();
+    @Override
+    public void deleteGreeting(
+        DeleteGreetingRequest request,
+        StreamObserver<DeleteGreetingResponse> responseObserver
+    ) {
+        if (request.equals(request.getDefaultInstanceForType())) {
+            responseObserver.onError(new IllegalArgumentException("invalid greeting id"));
+        } else {
+            helloService.delete(request.getId());
+            responseObserver.onNext(DeleteGreetingResponse.getDefaultInstance());
+            responseObserver.onCompleted();
+        }
     }
-  }
 
-  private GreetingResponse toGreetingResponse(HelloDto helloDto) {
-    return GreetingResponse.newBuilder()
-        .setId(helloDto.getId())
-        .setGreeting(helloDto.getValue())
-        .build();
-  }
+    @Override
+    public void getAllGreetings(
+        GetGreetingsRequest request,
+        StreamObserver<GreetingsResponse> responseObserver
+    ) {
+        List<GreetingResponse> result = helloService.getAll()
+            .stream().map(this::toGreetingResponse)
+            .collect(toList());
+
+        GreetingsResponse response = GreetingsResponse.newBuilder()
+            .addAllGreetings(result)
+            .build();
+
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void updateGreeting(
+        UpdateGreetingRequest request,
+        StreamObserver<GreetingResponse> responseObserver
+    ) {
+        if (request.equals(request.getDefaultInstanceForType())) {
+            responseObserver.onError(new IllegalArgumentException("invalid greeting id"));
+        } else {
+            HelloDto helloDto = helloService.updateGreeting(request.getId(), request.getGreeting());
+            responseObserver.onNext(toGreetingResponse(helloDto));
+            responseObserver.onCompleted();
+        }
+    }
+
+    private GreetingResponse toGreetingResponse(HelloDto helloDto) {
+        return GreetingResponse.newBuilder()
+            .setId(helloDto.getId())
+            .setGreeting(helloDto.getValue())
+            .build();
+    }
 }

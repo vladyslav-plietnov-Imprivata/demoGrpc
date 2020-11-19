@@ -6,13 +6,13 @@ import java.util.List;
 
 public interface HelloService {
 
-  HelloDto createGreeting(String greeting);
+    HelloDto createGreeting(String greeting);
 
-  HelloDto updateGreeting(int id, String greeting);
+    HelloDto updateGreeting(int id, String greeting);
 
-  void delete(int id);
+    void delete(int id);
 
-  HelloDto get(int id);
+    HelloDto get(int id);
 
-  List<HelloDto> getAll();
+    List<HelloDto> getAll();
 }

@@ -21,43 +21,43 @@ import java.util.List;
 @RequestMapping("/base")
 public class Controller {
 
-  private final HelloService helloService;
+    private final HelloService helloService;
 
-  public Controller(HelloService helloService) {
-    this.helloService = helloService;
-  }
-
-  @GetMapping("/{id}")
-  public ResponseEntity<String> get(@PathVariable("id") int id) {
-    HelloDto helloDto = helloService.get(id);
-    if (nonNull(helloDto)) {
-      return ResponseEntity.ok(helloDto.getValue());
-    } else {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    public Controller(HelloService helloService) {
+        this.helloService = helloService;
     }
-  }
 
-  @PostMapping
-  public ResponseEntity<HelloDto> create(@RequestBody CreateGreetingRequest request) {
-    HelloDto result = helloService.createGreeting(request.getGreeting());
-    return ResponseEntity.status(HttpStatus.CREATED).body(result);
-  }
+    @GetMapping("/{id}")
+    public ResponseEntity<String> get(@PathVariable("id") int id) {
+        HelloDto helloDto = helloService.get(id);
+        if (nonNull(helloDto)) {
+            return ResponseEntity.ok(helloDto.getValue());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
 
-  @DeleteMapping("/{id}")
-  public ResponseEntity<Object> delete(@PathVariable("id") int id) {
-    helloService.delete(id);
-    return ResponseEntity.ok().build();
-  }
+    @PostMapping
+    public ResponseEntity<HelloDto> create(@RequestBody CreateGreetingRequest request) {
+        HelloDto result = helloService.createGreeting(request.getGreeting());
+        return ResponseEntity.status(HttpStatus.CREATED).body(result);
+    }
 
-  @PutMapping
-  public ResponseEntity<Object> update(@RequestBody HelloDto helloDto) {
-    HelloDto dto = helloService.updateGreeting(helloDto.getId(), helloDto.getValue());
-    return ResponseEntity.ok(dto);
-  }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> delete(@PathVariable("id") int id) {
+        helloService.delete(id);
+        return ResponseEntity.ok().build();
+    }
 
-  @GetMapping
-  public ResponseEntity<Object> getAll() {
-    List<HelloDto> helloDto = helloService.getAll();
-    return ResponseEntity.ok(helloDto);
-  }
+    @PutMapping
+    public ResponseEntity<Object> update(@RequestBody HelloDto helloDto) {
+        HelloDto dto = helloService.updateGreeting(helloDto.getId(), helloDto.getValue());
+        return ResponseEntity.ok(dto);
+    }
+
+    @GetMapping
+    public ResponseEntity<Object> getAll() {
+        List<HelloDto> helloDto = helloService.getAll();
+        return ResponseEntity.ok(helloDto);
+    }
 }

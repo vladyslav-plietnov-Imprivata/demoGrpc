@@ -1,3 +1,7 @@
+plugins {
+    id "com.google.protobuf" version "0.8.13"
+}
+
 apply plugin: 'java'
 apply plugin: 'com.google.protobuf'
 
@@ -8,16 +12,6 @@ def grpcVersion = '1.33.1'
 
 repositories {
     mavenCentral()
-}
-
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.13'
-    }
 }
 
 dependencies {

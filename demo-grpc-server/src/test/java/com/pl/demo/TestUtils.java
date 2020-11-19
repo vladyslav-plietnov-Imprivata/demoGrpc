@@ -9,15 +9,7 @@ import com.google.protobuf.GeneratedMessageV3;
 import io.grpc.stub.StreamObserver;
 
 public class TestUtils {
-
-//  public static String asJsonString(Object obj) {
-//    try {
-//      return new ObjectMapper().writeValueAsString(obj);
-//    } catch (Exception e) {
-//      throw new RuntimeException(e);
-//    }
-//  }
-
+  
   public static <T extends GeneratedMessageV3> void verifyGrpc(T expectedResult, StreamObserver<T> streamObserver) {
     verify(streamObserver).onNext(expectedResult);
     verify(streamObserver, atLeastOnce()).onCompleted();

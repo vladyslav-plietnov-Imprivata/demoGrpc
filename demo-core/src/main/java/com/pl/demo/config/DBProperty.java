@@ -11,10 +11,10 @@ import org.springframework.context.annotation.PropertySource;
 @PropertySource("classpath:app.properties")
 public class DBProperty {
 
-  private String server;
-  private Integer port;
-  private String db;
-  private String username;
-  private String password;
-  private String schema;
+    private String server;
+    private Integer port;
+    private String db;
+    private String username;
+    private String password;
+    private String schema;
 }

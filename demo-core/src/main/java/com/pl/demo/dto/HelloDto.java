@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class HelloDto {
 
-  private int id;
-  private String value;
+    private int id;
+    private String value;
 }

@@ -19,46 +19,46 @@ import java.util.List;
 @RequestMapping("/base/grpc")
 public class ControllerGrpcClient {
 
-  private final ServiceBaseImpl helloService;
+    private final ServiceBase helloService;
 
-  public ControllerGrpcClient(ServiceBaseImpl helloService) {
-    this.helloService = helloService;
-  }
+    public ControllerGrpcClient(ServiceBase helloService) {
+        this.helloService = helloService;
+    }
 
-  @GetMapping("/{id}")
-  public ResponseEntity<String> get(
-      @PathVariable("id") int id
-  ) {
-    return ResponseEntity.ok(helloService.getGreeting(id).getValue());
-  }
+    @GetMapping("/{id}")
+    public ResponseEntity<String> get(
+        @PathVariable("id") int id
+    ) {
+        return ResponseEntity.ok(helloService.getGreeting(id).getValue());
+    }
 
-  @PostMapping
-  public ResponseEntity<HelloDto> create(
-      @RequestBody CreateGreetingRequest request
-  ) {
-    HelloDto result = helloService.createGreeting(request.getGreeting());
-    return ResponseEntity.status(HttpStatus.CREATED).body(result);
-  }
+    @PostMapping
+    public ResponseEntity<HelloDto> create(
+        @RequestBody CreateGreetingRequest request
+    ) {
+        HelloDto result = helloService.createGreeting(request.getGreeting());
+        return ResponseEntity.status(HttpStatus.CREATED).body(result);
+    }
 
-  @DeleteMapping("/{id}")
-  public ResponseEntity<Object> delete(
-      @PathVariable("id") int id
-  ) {
-    helloService.deleteGreeting(id);
-    return ResponseEntity.ok().build();
-  }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> delete(
+        @PathVariable("id") int id
+    ) {
+        helloService.deleteGreeting(id);
+        return ResponseEntity.ok().build();
+    }
 
-  @PutMapping
-  public ResponseEntity<Object> update(
-      @RequestBody
-          HelloDto helloDto) {
-    HelloDto dto = helloService.updateGreeting(helloDto.getId(), helloDto.getValue());
-    return ResponseEntity.ok(dto);
-  }
+    @PutMapping
+    public ResponseEntity<Object> update(
+        @RequestBody
+            HelloDto helloDto) {
+        HelloDto dto = helloService.updateGreeting(helloDto.getId(), helloDto.getValue());
+        return ResponseEntity.ok(dto);
+    }
 
-  @GetMapping
-  public ResponseEntity<Object> getAll() {
-    List<HelloDto> helloDto = helloService.getAllGreetings();
-    return ResponseEntity.ok(helloDto);
-  }
+    @GetMapping
+    public ResponseEntity<Object> getAll() {
+        List<HelloDto> helloDto = helloService.getAllGreetings();
+        return ResponseEntity.ok(helloDto);
+    }
 }

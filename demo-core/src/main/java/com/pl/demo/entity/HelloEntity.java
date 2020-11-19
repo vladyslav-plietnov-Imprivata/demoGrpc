@@ -19,8 +19,8 @@ import javax.persistence.Table;
 @Table(name = "hello_word", schema = "public")
 public class HelloEntity {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private int id;
-  private String value;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+    private String value;
 }
